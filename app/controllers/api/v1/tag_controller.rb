@@ -6,4 +6,34 @@ class Api::V1::TagController < ApplicationController
       tags: tags
     },status: :ok
   end
+
+  def show
+    tag = Tag.find(params[:id])
+    render json: todo
+  end
+
+  def create
+    tag = Tag.new(tag_params)
+    if tag.save
+      render json: tag
+    else
+      render json: tag.errors, status: 422
+    end
+  end
+
+  def update
+    tag = Tag.new(tag_params)
+    if tag.update(tag_params)
+      render json: tag
+    else
+      render json: tag.errors, status: 422
+    end
+  end
+
+  private
+
+  def tag_params
+    params.require(:tag).permit(:name)
+  end
+
 end
