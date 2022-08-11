@@ -1,4 +1,5 @@
 import axios from 'axios'
+import applyCaseMiddleware from 'axios-case-converter';
 
 const options = {
   ignoreHeaders: true,
@@ -10,3 +11,5 @@ const client = applyCaseMiddleware(
   }),
   options
 );
+
+export default client;

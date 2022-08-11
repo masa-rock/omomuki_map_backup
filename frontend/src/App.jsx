@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import Header from './components/modules/Header';
 import styled from 'styled-components';
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
-import { getCurrentUser } from "./api/auth";
+import { getCurrentUser } from "./apis/auth";
 import { SignIn } from './components/SignIn';
 import { SignUp } from './components/SignUp';
 import { Home } from './components/Home';
@@ -109,11 +109,7 @@ function LoginComponent() {
    );
  };
 
-const TopImage = styled.div`
-  color: "#fff";
-  Padding: "200px";
-  BackgroundImage :url(${process.env.PUBLIC_URL}/top_image.jpg);
-`;
+
 
 const Title = styled.h1`
  color: #aeaeae;
