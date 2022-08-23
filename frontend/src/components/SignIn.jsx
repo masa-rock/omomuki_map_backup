@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useContext } from "react";
 import { signIn } from '../apis/auth';
 import { AuthContext } from "../App";
+import { Paper, TextField, Typography } from "@mui/material";
+import Button from '@material-ui/core/Button';
+import styled from 'styled-components';
 
 export const SignIn = (e) => {
   const navigate = useNavigate();
@@ -40,34 +43,60 @@ export const SignIn = (e) => {
   }
 
   return (
+    <Paper
+      sx = {{
+        p: "100px",
+        width: "400px",
+        m: "0 auto"
+      }}
+    >
     <div>
-      <p>SignInページです</p>
-      <form>
+    <Typography variant={"h5"} sx={{ m: "30px" }}>
+      ログイン画面
+    </Typography>
+    <form>
+      <div>
+        <TextField 
+          type=" email"
+          id= "email"
+          label= "メールアドレス"
+          name= "email"
+          value= {email}
+          fullWidth
+          variant = "standard"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
         <div>
-          <label htmlFor="email">メールアドレス</label>
-          <input 
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-         <div>
-          <label htmlFor="password">パスワード</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit" onClick={(e) => handleSignInSubmit(e)}>ログイン</button>
-        </div>
-
-      </form>
-      <Link to={"/"}>Login</Link>
-      <Link to={"/signup"}>Singup</Link>
+        <TextField
+          type="password"
+          id="password"
+          label="パスワード"
+          name="password"
+          value={password}
+          fullWidth
+          variant = "standard"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button type="submit" variant="contained" color="primary" onClick={(e) => handleSignInSubmit(e)}>
+          ログイン
+        </Button>
+      </div>
+    </form>
+    <Space>
+      <Button variant ="outlined" color="primary" component={Link} to="/signup">
+        新規登録する
+      </Button>
+    </Space>
+    <Button variant ="outlined" color="primary" component={Link} to="/">
+      トップへ戻る
+    </Button>
     </div>
+    </Paper>
   )
 }
+
+const Space = styled.div`
+  margin-right:10px;
+  display:inline;
+`;
