@@ -25,6 +25,10 @@ gem 'net-pop'
 
 gem 'sprockets', '~> 3.7.2'
 
+gem 'aws-sdk-s3'
+
+gem 'dotenv-rails'
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 
@@ -41,6 +45,8 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 gem "bootsnap", require: false
 
 gem 'rack-cors'
+
+gem 'pry-byebug'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
