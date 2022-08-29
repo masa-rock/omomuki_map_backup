@@ -16,6 +16,10 @@ services:
       dockerfile: Dockerfile_back
     command: /bin/sh -c "rm -f /myapp/tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
     image: rails:dev
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
     volumes:
       - .:/myapp
       - ./app/vendor/bundle:/myapp/vendor/bundle 
