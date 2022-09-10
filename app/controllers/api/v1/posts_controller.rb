@@ -6,12 +6,12 @@ class Api::V1::PostsController < ApplicationController
 
   def show
     post = Post.find(params[:id])
-    render json: post
+    render json: post, methods: [:image_url]
   end
 
   def create
     post = Post.new(post_params)
-    if params[:images][:name]      
+    if not params[:images][:name] == ""
       blob = ActiveStorage::Blob.create_and_upload!(
         io: StringIO.new(decode(params[:images][:data]) + "\n"),
         filename: params[:images][:name]
@@ -20,9 +20,17 @@ class Api::V1::PostsController < ApplicationController
       post.save
       render json: post, methods: [:image_url]
     else
-      binding.pry
-      render json: post.errors, status: 422
+      post.save
+      render json: post, methods: [:image_url]
     end
+  end
+
+  def destroy
+    tag_posts = TagPost.where(post_id: @post.id)
+    tag_posts.each do |tp|
+      tp.destroy
+    end
+    @post.destroy
   end
 
   private
