@@ -1,10 +1,7 @@
 class Api::V1::TagController < ApplicationController
   def index
     tags = Tag.all
-
-    render json: {
-      tags: tags
-    },status: :ok
+    render json: tags
   end
 
   def show
@@ -33,7 +30,7 @@ class Api::V1::TagController < ApplicationController
   private
 
   def tag_params
-    params.require(:tag).permit(:name)
+    params.permit(:name)
   end
 
 end
