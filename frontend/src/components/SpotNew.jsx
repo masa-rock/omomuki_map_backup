@@ -5,6 +5,9 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import client from "../apis/client";
 import axios from 'axios';
+import { LoadScript } from '@react-google-maps/api';
+// import Geocoder from '@timwangdev/react-native-geocoder';
+import Geocode from "react-geocode";
 
 export const SpotNew = () =>{
   const navigate = useNavigate();
@@ -17,9 +20,14 @@ export const SpotNew = () =>{
   const [stayTime, setStayTime] = useState();
   const [eatWalk, setEatWalk] = useState();
   const [images, setImages] = useState({data: "", name: ""});
+  const [lat,setLat] = useState("");
+  const [lng,setLng] = useState("");
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState();
   const [checkedItems, setCheckedItems] = useState([])
+  const [map, setMap] = useState(null);
+  const [maps, setMaps] = useState(null);
+  const [geocoder, setGeocoder] = useState(null);
 
   useEffect(() => {
     axios.get('http://0.0.0.0:3001/api/v1/tag')
@@ -44,10 +52,39 @@ export const SpotNew = () =>{
       }
       reader.readAsDataURL(file)
     }
+    return ;
   }
+
+  const handleApiLoaded = (obj) => {
+    setMap(obj.map);
+    setMaps(obj.maps);
+    setGeocoder(new obj.maps.Geocoder());
+  };
+
+  const setLatLng = (lat, lng) =>{
+    setLat(lat)
+    setLng(lng)
+  }
+
+  const geoCode = () => {
+    return new Promise((resolve, reject) => {      
+      Geocode.setApiKey("AIzaSyBEJP2G58LPR_hjMtxUDkRcTxWkzSOWiAA");
+      Geocode.fromAddress(address).then(
+        response => {
+            const { lat, lng } = response.results[0].geometry.location;
+            setLatLng(lat, lng)
+            return resolve("good")
+        },
+        error => {
+            console.error(error);
+            return reject(null)
+        }
+    )
+      })}
 
   const handleTagRegistration = async(e) => {
     e.preventDefault();
+    
     const params = generateTagParams();
     try{
       client.post('/api/v1/tag',params)
@@ -98,14 +135,18 @@ export const SpotNew = () =>{
       stay_time: stayTime,
       eat_walk: eatWalk,
       images: images,
-      tag_ids: checkedItems
+      tag_ids: checkedItems,
+      lat: lat,
+      lng: lng
     }
     return newSpotParams
   }
 
-  const handleSpotRegistration = async(e) => {
+  async function handleSpotRegistration(e) {
     e.preventDefault();
-    const params = generateParams();
+    const geo = await geoCode()
+    console.log(lat)
+    const params = await generateParams();
     try{
       client.post('/api/v1/posts',params)
       navigate("/")
@@ -122,6 +163,7 @@ export const SpotNew = () =>{
       m: "0 auto"
     }}
     >
+      
     <Typography variant={"h5"} sx={{ m: "30px" }}>
       スポット登録画面
     </Typography>
@@ -147,7 +189,9 @@ export const SpotNew = () =>{
           value= {address}
           fullWidth
           variant = "standard"
-          onChange={(e) => setAddress(e.target.value)}
+          onChange={(e) => {
+            setAddress(e.target.value)
+            geoCode()}}
         />
         </div>
         <div>
@@ -285,6 +329,8 @@ export const SpotNew = () =>{
       <Button type="submit" variant="contained" color="primary" onClick={(e) => handleSpotRegistration(e)}>
         登録する
       </Button>
+      <LoadScript googleMapsApiKey= {"AIzaSyAWyQfXaQA7ITensdfjr7MOt081KlrKLec"}>
+      </LoadScript>
     </form>
     </Paper>
   )
