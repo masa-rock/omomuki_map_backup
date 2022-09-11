@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import {Grid, CardHeader, Card} from "@material-ui/core";
-import {CardMedia} from "@mui/material";
+import { Grid, CardHeader, Card } from "@material-ui/core";
+import { CardMedia } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom"
 
 export const SpotList = () => {
   const [spots, setSpots] = useState([])
-  const [searchName, setSearchName] = useState('') 
+  const navigate = useNavigate()
+  const location = useLocation()
+  const searchparams = location.state.params
+  
   useEffect(() => {
-    axios.get('http://0.0.0.0:3001/api/v1/posts')
-    // ,{headers: { "Accept": "application/json", "Content-Type": "application/json", "Access-control-allow-origin": "*" } })
+    console.log(searchparams)
+    axios.get('http://0.0.0.0:3001/api/v1/posts', {params: searchparams})
     .then(resp => {
       console.log(resp)
       setSpots(resp.data);
     })
-    .catch( e => {      
+    .catch( e => {
       console.log(e.response);
-      console.log("hoge");
       })
   },[])
 
@@ -27,14 +30,19 @@ export const SpotList = () => {
       }
   }
 
+  const ToSinglePage = (id) => {
+    navigate(`/spot/${id}`,{id: id})
+  }
+
   return(
     <>
       <h3>spotリスト</h3>
+      {}
       <Grid container spacing={1}>
         {spots.map((val) => {
         return(  
-          <Grid item xs={3} >
-            <Card>
+          <Grid item xs={3}>
+            <Card onClick={() => ToSinglePage(val.id)}>
               <CardHeader
                 title = { val.name }
               />
@@ -44,8 +52,6 @@ export const SpotList = () => {
               height = "200"
               />
             </Card>
-            {/* {val.image_url}
-            < DisplayImg img = {val.image_url} /> */}
           </Grid>  
         )
         })}

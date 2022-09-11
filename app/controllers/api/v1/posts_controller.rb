@@ -1,6 +1,11 @@
 class Api::V1::PostsController < ApplicationController
   def index
-    posts = Post.all
+    # binding.pry
+    if params[:keyword] != "" || params[:keyword]
+      posts = Post.where("name Like ?","%#{params[:keyword]}%").or(User.where("description Like ?", "%#{params[:keyword]}%"))
+    else
+      posts = Post.all
+    end
     render json: posts, methods: [:image_url]
   end
 
@@ -26,16 +31,17 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def destroy
-    tag_posts = TagPost.where(post_id: @post.id)
+    post = Post.find(params[:id])
+    tag_posts = TagPost.where(post_id: post.id)
     tag_posts.each do |tp|
       tp.destroy
     end
-    @post.destroy
+    post.destroy
   end
 
   private
   def post_params
-    params.permit(:name, :address, :business_hours_start, :business_hours_end, :fee, :eat_walk, :stay_time, :description, tag_ids: [])
+    params.permit(:name, :address, :business_hours_start, :business_hours_end, :fee, :eat_walk, :stay_time, :description, :lat, :lng, tag_ids: [])
   end
 
   def decode(str)

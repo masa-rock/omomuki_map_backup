@@ -37,7 +37,7 @@ export const Search = () => {
 
   const generateParams = () => {
     const search = {
-      tags: tags,
+      tags: checkedItems,
       keyword: keyword 
     }
     return search
@@ -53,11 +53,8 @@ export const Search = () => {
 
   const SearchSpot = () => {
     const params = generateParams();
-    try{
-      axios.get(`http://0.0.0.0:3001/api/v1/search/`, params)
-    }catch(e){
-      console.log(e)
-    }
+    console.log(params)
+    navigate(`/spot/list`,{state: {params: params}})
   }
 
   return(
