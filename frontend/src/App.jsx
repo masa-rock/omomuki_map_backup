@@ -1,6 +1,6 @@
 import './App.css';
 import React, {createContext, useEffect, useState} from 'react';
-// import { BrowserRouter, Router } from 'react-router-dom';
+import GoogleMapReact from 'google-map-react';
 import Button from '@material-ui/core/Button';
 import Header from './components/modules/Header';
 import styled from 'styled-components';
@@ -11,7 +11,8 @@ import { SignUp } from './components/SignUp';
 import { Home } from './components/Home';
 import { SpotNew } from './components/SpotNew';
 import { SpotList } from './components/SpotList';
-
+import { SpotSinglePage} from './components/SpotSinglePage';
+import { Search } from './components/Search'
 
 export const AuthContext = createContext();
 
@@ -19,7 +20,7 @@ export const AuthContext = createContext();
     const [loading, setLoading] = useState();
     const [isSignedIn, setIsSignedIn] = useState();
     const [currentUser, setCurrentUser] = useState();
-   
+    
     const handleGetCurrentUser = async () => {
       try {
         const res = await getCurrentUser();
@@ -77,7 +78,14 @@ export const AuthContext = createContext();
           <SignIn />
           </ContainerStyle>
         } />
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={
+          <>
+            <ContainerStyle>
+              <Search />
+            </ContainerStyle>
+            <Home />
+          </>
+        } />
         <Route path="/spot/new" element={
           <ContainerStyle>
             <SpotNew />
@@ -88,30 +96,17 @@ export const AuthContext = createContext();
             <SpotList />
           </ContainerStyle>
         } />
+        <Route path="/spot/:id" element={
+          <ContainerStyle>
+          <SpotSinglePage />
+        </ContainerStyle>
+        } />
       </Routes>
     </Router>
     </AuthContext.Provider>
   </div>
   );
  }
-
- const TopContainer = () => {
-   const [count,setCount] = useState(0);
-   return(
-     <div>
-       <ContainerStyle>
-         <h1>Hello World</h1>
-       <p>you clicked {count} times</p>
-       <Button variant="contained" color= "primary" onClick={() => setCount(count + 1)}>
-         Click me
-       </Button>
-       <Title>here is big?</Title>
-       </ContainerStyle>
-     </div>
-   );
- };
-
-
 
 const Title = styled.h1`
  color: #aeaeae;
@@ -120,7 +115,8 @@ const Title = styled.h1`
 
 const ContainerStyle = styled.div`
   background-image: url(${process.env.PUBLIC_URL}/top_image.jpg);
-  padding: 200px;
+  background-size: cover;
+  padding: 100px 200px;
   color: #aeaeae;
   font-size: 80px
 `;
