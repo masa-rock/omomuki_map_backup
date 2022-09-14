@@ -1,12 +1,25 @@
 class Api::V1::PostsController < ApplicationController
   def index
-    # binding.pry
-    if params[:keyword] != "" || params[:keyword]
-      posts = Post.where("name Like ?","%#{params[:keyword]}%").or(User.where("description Like ?", "%#{params[:keyword]}%"))
+    if not params[:keyword] == "" || params[:keyword].nil?
+      if params[:tags]
+        tag_params = params[:tags].map{|n| n.to_i}
+        posts = Post.includes(:tags).where("posts.name Like ?","%#{params[:keyword]}%").or(Post.where("description Like ?", "%#{params[:keyword]}%")).or(Post.includes(:tags).where(tags:{id:tag_params}))
+        tags = Tag.where(id:tag_params)
+        tag_name = tags.map{|t| t.name}
+      else
+        posts = Post.where("name Like ?","%#{params[:keyword]}%").or(Post.where("description Like ?", "%#{params[:keyword]}%"))
+      end
+    elsif not params[:tags].nil?        
+        tag_params = params[:tags].map{|n| n.to_i}
+        posts = Post.includes(:tags).where(tags:{id:tag_params})
+        tags = Tag.where(id:tag_params)
+        tag_name = tags.map{|t| t.name}
     else
       posts = Post.all
     end
-    render json: posts, methods: [:image_url]
+    counter = posts.size
+
+    render json: {"posts" => posts, "counter" => counter, "keyword" => params[:keyword], "tags" => tag_name}, methods: [:image_url]
   end
 
   def show
