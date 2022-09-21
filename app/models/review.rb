@@ -1,5 +1,7 @@
 class Review < ApplicationRecord
 
+  include Rails.application.routes.url_helpers
+  
   has_many_attached :images
   belongs_to :user
   belongs_to :post
