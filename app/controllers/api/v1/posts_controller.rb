@@ -11,7 +11,7 @@ class Api::V1::PostsController < ApplicationController
       end
     elsif not params[:tags].nil?        
         tag_params = params[:tags].map{|n| n.to_i}
-        posts = Post.includes(:tags).where(tags:{id:tag_params})
+        posts = Post.includes(:tags).where(tags:{id: tag_params})
         tags = Tag.where(id:tag_params)
         tag_name = tags.map{|t| t.name}
     else
@@ -19,12 +19,18 @@ class Api::V1::PostsController < ApplicationController
     end
     counter = posts.size
 
-    render json: {"posts" => posts, "counter" => counter, "keyword" => params[:keyword], "tags" => tag_name}, methods: [:image_url]
+    render json: {"posts" => posts, "counter" => counter, "keyword" => params[:keyword], "tags" => tag_name }, methods: [:image_url]
   end
 
   def show
     post = Post.find(params[:id])
-    render json: post, methods: [:image_url]
+    # tag_names = post.tags.map{|t| t.name}
+    post_reviews = Review.includes(:post).where(post:{id: post.id})
+    
+    total_reviews = post_reviews.sum{|hash| hash[:rate]}
+
+    # render json: {"post" => post, "tag_names" => tag_names, "reviews_count" => reviews_count, "average_reviews" => average_reviews }, methods: [:image_url]
+    render json: {"post" => post}, include: [:review, :tags], methods: [:image_url]
   end
 
   def create
@@ -50,6 +56,12 @@ class Api::V1::PostsController < ApplicationController
       tp.destroy
     end
     post.destroy
+  end
+
+  def post_review
+    post = Post.find(params[:id])
+    reviews = Review.includes(:post).where(post: {id: params[:id]})
+    render json: reviews, include: [:user], methods: [:image_url]
   end
 
   private
