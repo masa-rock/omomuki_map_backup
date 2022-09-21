@@ -10,7 +10,8 @@ Rails.application.routes.draw do
       # delete '/todos/destroy_all', to: 'todos#destroy_all'
       resources :tag, only: %i[index show create update]
       resources :posts, only: %i[index show create update destroy]
-      resources :reviews, only: %i[create]
+      resources :reviews, only: %i[index create]
+      get 'posts/review_data/:id', to: 'posts#post_review'
 
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {
         registrations: 'api/v1/auth/registrations'
