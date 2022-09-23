@@ -12,7 +12,8 @@ export const SearchMap = () => {
   useEffect(() => {
       axios.get('http://0.0.0.0:3001/api/v1/posts')
       .then(resp =>{
-        setSpots(resp.data);
+        console.log(resp.data.posts)
+        setSpots(resp.data.posts);
       })
       .catch(e => {
         console.log(e.response);
@@ -47,7 +48,7 @@ export const SearchMap = () => {
     )}
 
   const defaultProps = {
-    zoom: 10
+    zoom: 9.5
   };
 
   const HandleCenterChanged = () => {
@@ -60,7 +61,7 @@ export const SearchMap = () => {
   return(
     <LoadScript googleMapsApiKey="AIzaSyAWyQfXaQA7ITensdfjr7MOt081KlrKLec">
       <GoogleMap 
-        mapContainerStyle={{ height: '75vh', width: '60%' }} 
+        mapContainerStyle={{ height: '45vh', width: '40%' }} 
         center={center} 
         zoom={defaultProps.zoom}
         onCenterChanged ={HandleCenterChanged}>

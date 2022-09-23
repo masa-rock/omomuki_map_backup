@@ -1,0 +1,42 @@
+.pagination{
+  display: flex;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+/* pagination */
+
+.pagination > li {
+  margin: 0 20px;
+}
+
+.pagination > li > a{
+  position: relative;
+  font-size: 3rem;
+  width: 24px;
+  height: 24px;
+  outline: none;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.pagination > li > a::before{
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -100;
+}
+
+.pagination > li > a:hover::before{
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.pagination > li.active > a::before{
+  background-color: #fff;
+}

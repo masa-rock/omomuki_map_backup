@@ -29,10 +29,10 @@ export const SpotSinglePage = () => {
   const {setIsSignedIn, isSignedIn, currentUser, loading} = useContext(AuthContext);
   const [reviewCount, setReviewCount] = useState(0)
   const [postReview, setPostReview] = useState([])
-  const [averageReview, setAverageReview] = useState(0.0)
   const [flag, setFlag] = useState(false);
   const total_review = postReview.length
-  const average_review = postReview.reduce((sum, i) => sum + i.rate, 0)/total_review;
+  const average_review = total_review ? postReview.reduce((sum, i) => sum + i.rate, 0)/total_review : 0 ;
+  console.log(postReview)
   const value = {
     reviews,
     setReviews,
@@ -87,8 +87,17 @@ export const SpotSinglePage = () => {
     }
   }
 
+  const generateParams = (data) => {
+    const tag_param = [data]
+    const select_tag = {
+      tags: tag_param
+    }
+    return select_tag
+  }
+
   const toTagPage = (data) => {
-    navigate(`/spot/list`, {state: {tags: data}})
+    const params = generateParams(data)
+    navigate(`/spot/list`, {state: {params: params}})
   }
 
   const Stay = () =>{
@@ -128,7 +137,7 @@ export const SpotSinglePage = () => {
             <SinglePageSubject>タグ</SinglePageSubject>
             <SinglePageTags>{ tags.map((data) => {
               return(
-                <CheckBoxButton onClick={() => toTagPage(data.name)}>
+                <CheckBoxButton onClick={() => toTagPage(data.id)}>
                   {data.name}
                 </CheckBoxButton>
               )

@@ -53,8 +53,7 @@ export const Search = () => {
 
   const SearchSpot = () => {
     const params = generateParams();
-    console.log(params)
-    navigate(`/spot/list`,{state: {params: params}})
+    navigate(`/spot/list`, {state: {params: params}})
   }
 
   return(

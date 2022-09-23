@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Paper, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel } from "@mui/material";
 import { useState, useEffect } from "react";
 import styled from 'styled-components';
@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button';
 import client from "../apis/client";
 import axios from 'axios';
 import { LoadScript } from '@react-google-maps/api';
-// import Geocoder from '@timwangdev/react-native-geocoder';
 import Geocode from "react-geocode";
 
 export const SpotNew = () =>{
@@ -54,12 +53,6 @@ export const SpotNew = () =>{
     }
     return ;
   }
-
-  const handleApiLoaded = (obj) => {
-    setMap(obj.map);
-    setMaps(obj.maps);
-    setGeocoder(new obj.maps.Geocoder());
-  };
 
   const setLatLng = (lat, lng) =>{
     setLat(lat)
@@ -144,11 +137,10 @@ export const SpotNew = () =>{
 
   async function handleSpotRegistration(e) {
     e.preventDefault();
-    const geo = await geoCode()
-    console.log(lat)
-    const params = await generateParams();
+    const geo = geoCode();
+    const params = generateParams();
     try{
-      client.post('/api/v1/posts',params)
+      client.post('/api/v1/posts', params)
       navigate("/")
     }catch(e){
       console.log(e)

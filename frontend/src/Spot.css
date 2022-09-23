@@ -1,0 +1,25 @@
+.spot-list-card{
+  padding: 30px;
+  cursor: pointer;
+}
+
+.spot-list-card span{
+  text-align: left;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.review-container{
+  width: 100%;
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.review-container img{
+  width: 30%;
+}
+
+.review-container h3{
+  font-size: 30px;
+
+}
