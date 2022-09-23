@@ -1,25 +1,26 @@
 class Api::V1::PostsController < ApplicationController
   def index
-    if not params[:keyword] == "" || params[:keyword].nil?
+    if params[:keyword] == "" || params[:keyword].nil?
       if params[:tags]
         tag_params = params[:tags].map{|n| n.to_i}
-        posts = Post.includes(:tags).where("posts.name Like ?","%#{params[:keyword]}%").or(Post.where("description Like ?", "%#{params[:keyword]}%")).or(Post.includes(:tags).where(tags:{id:tag_params}))
-        tags = Tag.where(id:tag_params)
-        tag_name = tags.map{|t| t.name}
-      else
-        posts = Post.where("name Like ?","%#{params[:keyword]}%").or(Post.where("description Like ?", "%#{params[:keyword]}%"))
+        tag_ids = Post.includes(:tags).where(tags:{id:tag_params}).ids
+        posts = Post.where(id: tag_ids)
+      else        
+        posts = Post.all
       end
-    elsif not params[:tags].nil?        
-        tag_params = params[:tags].map{|n| n.to_i}
-        posts = Post.includes(:tags).where(tags:{id: tag_params})
-        tags = Tag.where(id:tag_params)
-        tag_name = tags.map{|t| t.name}
     else
-      posts = Post.all
+      if params[:tags]
+        tag_params = params[:tags].map{|n| n.to_i}
+        keyword_posts = Post.where("posts.name Like ?","%#{params[:keyword]}%").or(Post.where("description Like ?", "%#{params[:keyword]}%"))
+        tag_ids = keyword_posts.includes(:tags).where(tags:{id:tag_params}).ids
+        posts = Post.where(id: tag_ids)
+      else
+        posts = Post.includes(:tags).where("posts.name Like ?","%#{params[:keyword]}%").or(Post.where("description Like ?", "%#{params[:keyword]}%"))
+      end
     end
     counter = posts.size
 
-    render json: {"posts" => posts, "counter" => counter, "keyword" => params[:keyword], "tags" => tag_name }, methods: [:image_url]
+    render json: {"posts" => posts}, include: [:review, :tags], methods: [:image_url]
   end
 
   def show
