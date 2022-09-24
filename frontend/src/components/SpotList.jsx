@@ -38,11 +38,10 @@ export const SpotList = () => {
     })
     axios.get('http://0.0.0.0:3001/api/v1/posts', {params: searchparams})
     .then(resp => {
-      console.log(resp)
       setSpots(resp.data.posts);
       setCount(resp.data.posts.length);
       setKeyword(searchparams.keyword);
-      setTag(searchparams.tag);
+      setTag(searchparams.tags);      
     })
     .catch( e => {
       console.log(e.response);
@@ -54,8 +53,6 @@ export const SpotList = () => {
       const display_img =  img.length != 0 ? img : noImg
       return display_img
   }
-
-  console.log(spots)
 
   const toTagPage = (data) => {
     navigate(`/spot/list`, {state: {tags: data}})
@@ -78,12 +75,26 @@ export const SpotList = () => {
     )
   }
 
+  const TagDisplay = () => {
+    const tag_names = []    
+    allTag.map((t) => {
+      console.log(t.id)
+      if( tag.includes(t.id.toString()) ){
+        console.log('goog')
+        tag_names.push(t.name)
+      }
+    })
+    return(
+      <p>タグ：{tag_names ? tag_names.join(', ') : ""}</p>
+    )
+  }
+
   return(
     <>
       <h3>spotリスト</h3>
       <p>{keyword ? `キーワード：${keyword}`:``}</p>
-      <p>検索結果：{count}件がヒットしました。</p>
-      <p>タグ：{tag ? tag.join(',') : ""}</p>
+      <p>検索結果：{count}件がヒットしました。</p>      
+      <TagDisplay/>
       <Grid container spacing={3}>
         {spots.slice(offset, offset+ perPage).map((val) => {
         return(  

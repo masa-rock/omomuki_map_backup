@@ -71,7 +71,7 @@ export const Search = () => {
             <TextField 
               type="text"
               id= "name"
-              label= "城下町、行きたい場所..."
+              label= "キーワードを入力してください"
               name= "name"
               value= {keyword}
               fullWidth

@@ -65,44 +65,44 @@ export const AuthContext = createContext();
           setCurrentUser,
         }}
       >
-    <Router>
-    <Header />
-      <Routes>          
-        <Route path="/signup" element={
-          <ContainerStyle>
-            <SignUp />
-          </ContainerStyle>
-        }/>
-        <Route path="/signin" element={
-          <ContainerStyle>
-          <SignIn />
-          </ContainerStyle>
-        } />
-        <Route path="/" element={
-          <>
+      <Router>
+      <Header />
+        <Routes>          
+          <Route path="/signup" element={
             <ContainerStyle>
-              <Search />
+              <SignUp />
             </ContainerStyle>
-            <Home />
-          </>
-        } />
-        <Route path="/spot/new" element={
-          <ContainerStyle>
-            <SpotNew />
+          }/>
+          <Route path="/signin" element={
+            <ContainerStyle>
+            <SignIn />
+            </ContainerStyle>
+          } />
+          <Route path="/" element={
+            <>
+              <ContainerStyle>
+                <Search />
+              </ContainerStyle>
+              <Home />
+            </>
+          } />
+          <Route path="/spot/new" element={
+            <ContainerStyle>
+              <SpotNew />
+            </ContainerStyle>
+            } />
+          <Route path="/spot/list" element={
+            <ContainerStyle>
+              <SpotList />
+            </ContainerStyle>
+          } />
+          <Route path="/spot/:id" element={
+            <ContainerStyle>
+            <SpotSinglePage />
           </ContainerStyle>
           } />
-        <Route path="/spot/list" element={
-          <ContainerStyle>
-            <SpotList />
-          </ContainerStyle>
-        } />
-        <Route path="/spot/:id" element={
-          <ContainerStyle>
-          <SpotSinglePage />
-        </ContainerStyle>
-        } />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
     </AuthContext.Provider>
   </div>
   );

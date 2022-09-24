@@ -25,7 +25,8 @@ export const SearchMap = () => {
   const MarkerMap = () =>{
     return(
       spots.map((val) => (
-        <>        
+        <>
+          {console.log(typeof val.lat)}
           <Marker 
             key={val.id} 
             position={{lat:val.lat, lng:val.lng}}
@@ -65,7 +66,7 @@ export const SearchMap = () => {
         center={center} 
         zoom={defaultProps.zoom}
         onCenterChanged ={HandleCenterChanged}>
-        <MarkerMap/>  
+        <MarkerMap/>
        </GoogleMap>
     </LoadScript>
   )

@@ -19,8 +19,8 @@ export const SpotNew = () =>{
   const [stayTime, setStayTime] = useState();
   const [eatWalk, setEatWalk] = useState();
   const [images, setImages] = useState({data: "", name: ""});
-  const [lat,setLat] = useState("");
-  const [lng,setLng] = useState("");
+  const [lat,setLat] = useState(0);
+  const [lng,setLng] = useState(0);
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState();
   const [checkedItems, setCheckedItems] = useState([])
@@ -55,6 +55,8 @@ export const SpotNew = () =>{
   }
 
   const setLatLng = (lat, lng) =>{
+    console.log(lat)
+    console.log(lng)
     setLat(lat)
     setLng(lng)
   }
@@ -137,7 +139,6 @@ export const SpotNew = () =>{
 
   async function handleSpotRegistration(e) {
     e.preventDefault();
-    const geo = geoCode();
     const params = generateParams();
     try{
       client.post('/api/v1/posts', params)
