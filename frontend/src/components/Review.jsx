@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 import { TextField, CardHeader, Card } from "@material-ui/core";
-import ReactStarsRatings from 'react-awesome-stars-rating';
-import { Typography } from "@mui/material";
+import ReactStarsRating from 'react-awesome-stars-rating';
+import { Typography, CardMedia, Rating } from "@mui/material";
 import Button from '@material-ui/core/Button';
 import { useState, useEffect, useContext } from "react";
-import { CardMedia } from "@mui/material";
 import {useModal} from 'react-hooks-use-modal';
 import { AuthContext } from '../App';
 import { FlagContext } from './SpotSinglePage'
@@ -16,6 +15,9 @@ const Review = () => {
   const navigate = useNavigate()
   const value = useContext(FlagContext);
   const [assessment, setAssessment] = useState()
+  const [error, setError] = useState([])
+  const [titleBlank, setTitleBlank] = useState(false)
+  const [commentBlank, setCommentBlank] = useState(false)
 
   const DoReview = () => {
     if (!loading){
@@ -34,22 +36,24 @@ const Review = () => {
       }}
   }
 
-  const onChange = (value) => {
-    value.setStar(value);
-  }
-
   const [Modal, open, close, isOpen] = useModal('root',{
     preventScroll: true
   })
 
   const handleSpotRegistration = async(e) => {
     e.preventDefault();
-    const params = await generateParams();
-    try{
-      client.post('/api/v1/reviews', params)
-      navigate(-1)
-    }catch(e){
-      console.log(e)
+    if(value.title && value.reviewComment){
+      const params = await generateParams();
+      try{
+        const data = client.post('reviews', params)
+        console.log(data)
+      }catch(e){
+        console.log(e)
+      }
+    }else{
+      console.log("good")
+      value.title ? setTitleBlank(false) : setTitleBlank(true)
+      value.reviewComment ? setCommentBlank(false) : setCommentBlank(true)
     }
   }
 
@@ -69,23 +73,14 @@ const Review = () => {
   }
 
   const DisplayImg = (img) =>{
-    console.log(img)
     const display_img =  img.length != 0 ? img : `${process.env.PUBLIC_URL}/noimg.jpg`
     return display_img
 }
 
-  const ReviewCardImg = (img) => {
-    const display_img =  img.img.length != 0 ? img : `${process.env.PUBLIC_URL}/noimg.jpg`
-    console.log(display_img)
-    return(
-      <img src = {display_img} />
-    )
-  }
-
   const generateParams = () => {
     const reviewParams = {
       title: value.title,
-      comment: value.reviews,
+      comment: value.reviewComment,
       rate: value.star,
       user_id: value.userId,
       post_id: value.post.id,
@@ -106,7 +101,6 @@ const Review = () => {
       { value.reviews.map((key) => {
         return(
           <Card className = {"spot-list-card review-container"}>
-            {console.log(key.image_url)}
             {/* <ReviewCardImg img = {key.image_url}/> */}
             <CardMedia
               component = "img"
@@ -120,7 +114,10 @@ const Review = () => {
                   <h3> { key.title } </h3>
                 </div>
                 <ReviewMainRight>
-                  <ReactStarsRatings value={key.rate} />
+                  <Rating 
+                    value = {key.rate}
+                    precision = {0.1}
+                     />
                   <span>{key.rate}</span>
                 </ReviewMainRight>
               </ReviewMain>
@@ -133,21 +130,21 @@ const Review = () => {
     <Modal>
       <ModalStyle>
         <form>
+          { titleBlank ? <ErrorMessage>※タイトルを入力してください</ErrorMessage> : "" }
+          { commentBlank ? <ErrorMessage>※コメントを入力してください</ErrorMessage> : "" }
           <SingleSpotTitle>"{value.name}"のレビューを追加する</SingleSpotTitle>
           <Assessment>
             <SingleSpotTitle>評価</SingleSpotTitle>
-            <ReactStarsRatings 
-              onChange={(e) => {
-                value.setStar(e.target.value)
-              }} 
-              value={value.star} />
+            <Rating
+              value={value.star}              
+              onChange = {(e) => value.setStar(e.target.value)}
+              precision = { 0.1 }
+              />
             <TextField
               type = "number"
               value = {value.star}
               inputProps = {{ step: 0.1, max: 5, min: 0 }}
-              onChange = {(e) => {
-                value.setStar(e.target.value)
-              }}
+              onChange = {(e) => value.setStar(e.target.value)}
             />
           </Assessment>              
           <TextField 
@@ -165,12 +162,12 @@ const Review = () => {
             id= "review"
             label= "レビュー内容を入れてください"
             name= "review"
-            value= { value.reviews }
+            value= { value.reviewComment }
             fullWidth
             multiline
             rows = {15}
             variant = "standard"
-            onChange={(e) => value.setReviews(e.target.value)}
+            onChange={(e) => value.setReviewComment(e.target.value)}
           />
           <Typography variant={"h5"} sx={{ mt: "30px" }}>
             画像アップロード
@@ -266,4 +263,9 @@ const ReviewMainRight = styled.div`
     font-weight: bold;
     color: red;
   }
+`
+
+const ErrorMessage = styled.p`
+  color: red;
+  font-weight: bold;
 `

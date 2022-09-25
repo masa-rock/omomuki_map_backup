@@ -69,7 +69,7 @@ export const SpotList = () => {
     return (
       <>
         <ReactStarsRatings value={average_review_result} />
-        <span> { average_review_result } </span>
+        <span> { average_review_result.toFixed(2) } </span>
         <span> ({ total_review }) </span>
       </>
     )
