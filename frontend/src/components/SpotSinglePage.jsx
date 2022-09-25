@@ -5,8 +5,9 @@ import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import { AuthContext } from '../App';
 import Review from "./Review";
-import { display } from "@mui/system";
-import ReactStarsRatings from 'react-awesome-stars-rating';
+import { Rating } from "@mui/material";
+import { ImAirplane } from 'react-icons/im';
+import { IconContext } from "react-icons/lib";
 
 export const FlagContext = createContext();
 
@@ -26,13 +27,16 @@ export const SpotSinglePage = () => {
   const [star, setStar] = useState(0)
   const [images, setImages] = useState({data: "", name: ""});
   const [reviews, setReviews] = useState([])
-  const {setIsSignedIn, isSignedIn, currentUser, loading} = useContext(AuthContext);
-  const [reviewCount, setReviewCount] = useState(0)
+  const [reviewComment, setReviewComment] = useState()
+  const [iconColor, setIconColor] = useState("#d3d3d3");
+  const { currentUser } = useContext(AuthContext);
   const [postReview, setPostReview] = useState([])
+  const [wantToGoUserId, setWantToGoUserId] = useState([])
+  const [wantToGo, setWantToGo] = useState([])
+  const [wantToGoData, setWantToGoData] = useState([])
   const [flag, setFlag] = useState(false);
   const total_review = postReview.length
   const average_review = total_review ? postReview.reduce((sum, i) => sum + i.rate, 0)/total_review : 0 ;
-  console.log(postReview)
   const value = {
     reviews,
     setReviews,
@@ -40,6 +44,8 @@ export const SpotSinglePage = () => {
     setStar,
     title,
     setTitle,
+    reviewComment,
+    setReviewComment,
     userId,
     post,
     name,
@@ -63,10 +69,22 @@ export const SpotSinglePage = () => {
     setUserId(currentUser?.id)
     setReviews(getReviews.data)
     setPostReview(getSpot.data.post.review)
-    // setReview(getSpot.data.reviews)
+    setWantToGo(getSpot.data.post.want_to_goes)
+    setWantToGoUserId(getSpot.data.post.want_to_goes.map((d) => {return d.user_id}))
   }
   fetchData()
-},[])
+},[iconColor])
+
+  useEffect(() => {
+    if(currentUser){
+      wantToGoUserId.includes(currentUser.id) ? setIconColor("#B2D235") : setIconColor("#d3d3d3")
+      setWantToGoData(wantToGo.map((key) => {
+            if(key.user_id = currentUser.id){
+              return key
+            }
+          }))
+    }
+  },[wantToGoUserId])
 
   const DisplayImg = () =>{
     const display_img =  img.length != 0 ? img : `${process.env.PUBLIC_URL}/noimg.jpg`
@@ -100,7 +118,7 @@ export const SpotSinglePage = () => {
     navigate(`/spot/list`, {state: {params: params}})
   }
 
-  const Stay = () =>{
+  const Stay = () => {
     const stay_time ={
       "1": "1時間未満",
       "2": "1~2時間",
@@ -114,14 +132,62 @@ export const SpotSinglePage = () => {
     )
   }
 
-  console.log(average_review)
+  const IconControll = () => {
+    console.log(wantToGoData)
+    console.log(wantToGoUserId)
+    const wantToGoParams = {
+      user_id: currentUser.id,
+      post_id: post.id
+    }
+    const uid = currentUser.id
+    const wantToGoDataId = wantToGoData[0] ? wantToGoData[0].id : ""
+    console.log(wantToGoDataId)
+    if (wantToGoUserId.includes(uid)){
+      try{
+        axios.delete(`http://0.0.0.0:3001/api/v1/want_to_goes/${wantToGoDataId}`)
+        setIconColor("#d3d3d3")
+        setWantToGoUserId([])
+      }catch(e){
+        console.log(e)
+      }
+    }else{
+      try{
+        axios.post('http://0.0.0.0:3001/api/v1/want_to_goes', wantToGoParams)
+        setIconColor("#B2D235")
+      }catch(e){
+        console.log(e)
+      }
+    }
+  }
+
+  const WantToGo = () => {
+    return(
+      <IconContext.Provider
+        value = {{size: "20px", color: iconColor}}
+        className = {"want-to-go-icon"}
+        >
+        <WantToGoIconBtn wantToGoData = {wantToGoData[0]} onClick = {() => IconControll()}>
+        <ImAirplane/>
+        {wantToGoData[0] ?
+          <span> 行きたい場所に登録済み </span> :
+          <span> 行きたい場所に未登録 </span>
+        }
+        
+        </WantToGoIconBtn>
+      </IconContext.Provider>
+    )
+  }
 
   return(
     <SinglePageContainer>
       <SingleSpotTitle>
         {name}      
-        <ReactStarsRatings value={average_review} />
-        <span> { average_review } </span>
+        <Rating
+         value = { average_review }
+         precision = { 0.1 }
+         readOnly = { true }
+          />
+        <span> { average_review.toFixed(2) } </span>
         ({ total_review })
       </SingleSpotTitle>
       <SinglePageMain>
@@ -129,6 +195,7 @@ export const SpotSinglePage = () => {
           <DisplayImg/>
         </ImageContainer>
         <SinglePageRightContainer>
+          { currentUser ? <WantToGo/> : <></> }
           <SpotContents>
             <SinglePageSubject>住所</SinglePageSubject>
             <SinglePageText><p>{address}</p></SinglePageText>
@@ -181,7 +248,7 @@ const SingleSpotTitle = styled.div`
   text-align: left;
   margin-left: 20px;
   &&& span{
-    color: red;    
+    color: red;
   } 
 `
 
@@ -245,3 +312,12 @@ const CheckBoxButton = styled.div`
     transition: 0.5s;
   }
 `
+
+const WantToGoIconBtn = styled.div`
+  font-size: 20px;
+  text-align: left;
+  &&& span{
+    margin-left:10px;
+    color: ${props => props.wantToGoData ? '#B2D235' : '#d3d3d3'}
+  }
+` 

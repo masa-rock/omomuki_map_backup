@@ -5,6 +5,8 @@ class Post < ApplicationRecord
   has_many_attached :images
   has_many :tag_posts, dependent: :destroy
   has_many :review, dependent: :destroy
+  belongs_to :user, optional: true
+  has_many :want_to_goes, dependent: :destroy
   has_many :tags, through: :tag_posts, dependent: :destroy
 
   def image_url

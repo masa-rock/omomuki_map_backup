@@ -7,11 +7,15 @@ class Api::V1::ReviewsController < ApplicationController
         filename: params[:images][:name]
       )
       review.images.attach(blob)
+    #   render json: review, methods: [:image_url]
+    # else      
+    #   render json: review, methods: [:image_url]
+    end
+
+    if review.valid?
       review.save
-      render json: review, methods: [:image_url]
     else
-      review.save
-      render json: review, methods: [:image_url]
+      render json: review, methods: [:error_message]
     end
   end
 

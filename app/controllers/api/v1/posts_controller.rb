@@ -25,13 +25,10 @@ class Api::V1::PostsController < ApplicationController
 
   def show
     post = Post.find(params[:id])
-    # tag_names = post.tags.map{|t| t.name}
     post_reviews = Review.includes(:post).where(post:{id: post.id})
-    
     total_reviews = post_reviews.sum{|hash| hash[:rate]}
 
-    # render json: {"post" => post, "tag_names" => tag_names, "reviews_count" => reviews_count, "average_reviews" => average_reviews }, methods: [:image_url]
-    render json: {"post" => post}, include: [:review, :tags], methods: [:image_url]
+    render json: {"post" => post}, include: [:review, :tags, :want_to_goes], methods: [:image_url]
   end
 
   def create
