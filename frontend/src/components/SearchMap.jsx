@@ -12,7 +12,6 @@ export const SearchMap = () => {
   useEffect(() => {
       axios.get('http://0.0.0.0:3001/api/v1/posts')
       .then(resp =>{
-        console.log(resp.data.posts)
         setSpots(resp.data.posts);
       })
       .catch(e => {
@@ -26,7 +25,6 @@ export const SearchMap = () => {
     return(
       spots.map((val) => (
         <>
-          {console.log(typeof val.lat)}
           <Marker 
             key={val.id} 
             position={{lat:val.lat, lng:val.lng}}

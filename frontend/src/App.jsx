@@ -1,7 +1,6 @@
 import './App.css';
+import './mypage.css';
 import React, {createContext, useEffect, useState} from 'react';
-import GoogleMapReact from 'google-map-react';
-import Button from '@material-ui/core/Button';
 import Header from './components/modules/Header';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -9,6 +8,8 @@ import { getCurrentUser } from "./apis/auth";
 import { SignIn } from './components/SignIn';
 import { SignUp } from './components/SignUp';
 import { Home } from './components/Home';
+import { EditProfile } from './components/EditProfile';
+import { WantToGo } from './components/WantToGo';
 import { SpotNew } from './components/SpotNew';
 import { SpotList } from './components/SpotList';
 import { SpotSinglePage} from './components/SpotSinglePage';
@@ -17,30 +18,36 @@ import { Search } from './components/Search'
 export const AuthContext = createContext();
 
   const App = () => {
+    console.log("start")
     const [loading, setLoading] = useState();
-    const [isSignedIn, setIsSignedIn] = useState();
+    const [isSignedIn, setIsSignedIn] = useState(false);
     const [currentUser, setCurrentUser] = useState();
-    
     const handleGetCurrentUser = async () => {
-      try {
+      
+        console.log('try?')
         const res = await getCurrentUser();
-   
-        if (res?.data.isLogin === true) {
+        // if (res?.data.isLogin === true) 
+        res.then(resp =>{
+          console.log("hogeif?")
           setIsSignedIn(true);
-          setCurrentUser(res?.data.data);
-          console.log(res?.data.data);
-        } else {
-          console.log("no current user");
-        }
-      } catch (e) {
+          setCurrentUser(resp.data.data);
+          console.log(resp.data.data);
+        })
+        // } else {
+        //   console.log("hogeelse?")
+        //   console.log("no current user");
+        // }
+      .catch(e => {
         console.log(e);
-      }
+        console.log("hogecatch?ex")
+      })
       setLoading(false);
     };
    
     useEffect(() => {
-      handleGetCurrentUser();
-    }, [setCurrentUser]);
+      console.log("3.1")
+      handleGetCurrentUser()
+    }, [setCurrentUser])
    
     const Private = ({ children }) => {
       if (!loading) {
@@ -68,16 +75,6 @@ export const AuthContext = createContext();
       <Router>
       <Header />
         <Routes>          
-          <Route path="/signup" element={
-            <ContainerStyle>
-              <SignUp />
-            </ContainerStyle>
-          }/>
-          <Route path="/signin" element={
-            <ContainerStyle>
-            <SignIn />
-            </ContainerStyle>
-          } />
           <Route path="/" element={
             <>
               <ContainerStyle>
@@ -85,6 +82,22 @@ export const AuthContext = createContext();
               </ContainerStyle>
               <Home />
             </>
+          } />
+          <Route path="/signup" element={
+            <ContainerStyle>
+              <SignUp />
+            </ContainerStyle>
+          }/>
+          <Route path="/signin" element={
+            <ContainerStyle>
+              <SignIn />
+            </ContainerStyle>
+          } />
+          <Route path="/edit-profile" element={
+            <EditProfile />
+          } />
+          <Route path="/want_to_go" element={
+            <WantToGo />
           } />
           <Route path="/spot/new" element={
             <ContainerStyle>

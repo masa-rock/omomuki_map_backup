@@ -12,17 +12,17 @@ services:
 
   app:
     build: 
-      context: .
+      context: backend
       dockerfile: Dockerfile_back
     command: /bin/sh -c "rm -f /myapp/tmp/pids/server.pid && bundle exec rails s -p 3001 -b '0.0.0.0'"
     image: rails:dev
     stdin_open: true
     tty: true
     env_file:
-      - .env
+      - backend/.env
     volumes:
-      - .:/myapp
-      - ./app/vendor/bundle:/myapp/vendor/bundle 
+      - ./backend:/myapp
+      - .app/vendor/bundle:/myapp/vendor/bundle 
     environment:
       TZ: Asia/Tokyo
       RAILS_ENV: development

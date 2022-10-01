@@ -28,13 +28,13 @@ export const getCurrentUser = () => {
     !Cookies.get("_access_token") ||
     !Cookies.get("_client") ||
     !Cookies.get("_uid")
-  ) return;
+  ) return
 
-  return client.get("api/v1/auth/sessions", {
+  return client.get("/auth/sessions", {
     headers: {
       "access-token": Cookies.get("_access_token"),
       "client": Cookies.get("_client"),
       "uid": Cookies.get("_uid"),
-    },
-  });
-};
+    }
+  })
+}

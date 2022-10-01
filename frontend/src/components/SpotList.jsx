@@ -28,7 +28,6 @@ export const SpotList = () => {
   }
 
   useEffect(() => {
-    console.log(searchparams)
     axios.get('http://0.0.0.0:3001/api/v1/tag')
     .then(resp => {
       setAllTag(resp.data)

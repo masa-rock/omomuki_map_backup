@@ -35,6 +35,8 @@ export const SignIn = (e) => {
         setIsSignedIn(true)
         setCurrentUser(res.data.data)
 
+        console.log("signinできた")
+
         navigate(-1)
       }
     } catch (e){

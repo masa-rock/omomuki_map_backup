@@ -11,6 +11,6 @@ const client = applyCaseMiddleware(
     // headers: { "Accept": "application/json", "Content-Type": "application/json", "Access-control-allow-origin": "*" } 
   }),
   options
-);
+)
 
-export default client;
+export default client

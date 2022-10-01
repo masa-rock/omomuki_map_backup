@@ -55,10 +55,13 @@ export default function ButtonAppBar() {
       if (isSignedIn) {
         return(
           <>
-            {currentUser?.name}
-             <Button color="inherit" className={classes.linkBtn} onClick={handleSignOut}>
-               Sign out
-             </Button>
+            <Button color="inherit" component={Link} to="../edit-profile">
+              {currentUser?.name}
+            </Button>
+            <Button color="inherit" className={classes.linkBtn} onClick={handleSignOut}>
+              Sign out
+            </Button>
+            <Button color="inherit" component={Link} to="/">Home</Button>
           </>
         )
       } else {

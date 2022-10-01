@@ -1,3 +1,4 @@
+/* spot-list page */
 .spot-list-card{
   padding: 30px;
   cursor: pointer;
@@ -9,6 +10,7 @@
   font-weight: bold;
 }
 
+/* single page */
 .review-container{
   width: 100%;
   display: flex;

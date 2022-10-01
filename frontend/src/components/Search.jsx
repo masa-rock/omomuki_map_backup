@@ -14,7 +14,6 @@ export const Search = () => {
   useEffect(() => {
     axios.get('http://0.0.0.0:3001/api/v1/tag')
     .then(resp => {
-      console.log(resp)
       setTags(resp.data)
     })
     .catch(e => {
