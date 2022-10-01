@@ -35,7 +35,7 @@ export const SignIn = (e) => {
         setIsSignedIn(true)
         setCurrentUser(res.data.data)
 
-        navigate("/")
+        navigate(-1)
       }
     } catch (e){
       console.log(e);

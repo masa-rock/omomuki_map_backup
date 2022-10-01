@@ -1,9 +1,12 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Paper, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import client from "../apis/client";
+import axios from 'axios';
+import { LoadScript } from '@react-google-maps/api';
+import Geocode from "react-geocode";
 
 export const SpotNew = () =>{
   const navigate = useNavigate();
@@ -16,6 +19,25 @@ export const SpotNew = () =>{
   const [stayTime, setStayTime] = useState();
   const [eatWalk, setEatWalk] = useState();
   const [images, setImages] = useState({data: "", name: ""});
+  const [lat,setLat] = useState(0);
+  const [lng,setLng] = useState(0);
+  const [tags, setTags] = useState([]);
+  const [newTag, setNewTag] = useState();
+  const [checkedItems, setCheckedItems] = useState([])
+  const [map, setMap] = useState(null);
+  const [maps, setMaps] = useState(null);
+  const [geocoder, setGeocoder] = useState(null);
+
+  useEffect(() => {
+    axios.get('http://0.0.0.0:3001/api/v1/tag')
+    .then(resp => {
+      console.log(resp)
+      setTags(resp.data)
+    })
+    .catch(e => {
+      console.log(e.response)
+    })
+  },[])
 
   const handleImageSelect = async(e) => {
     const reader = new FileReader()
@@ -29,6 +51,72 @@ export const SpotNew = () =>{
       }
       reader.readAsDataURL(file)
     }
+    return ;
+  }
+
+  const setLatLng = (lat, lng) =>{
+    console.log(lat)
+    console.log(lng)
+    setLat(lat)
+    setLng(lng)
+  }
+
+  const geoCode = () => {
+    return new Promise((resolve, reject) => {      
+      Geocode.setApiKey("AIzaSyBEJP2G58LPR_hjMtxUDkRcTxWkzSOWiAA");
+      Geocode.fromAddress(address).then(
+        response => {
+            const { lat, lng } = response.results[0].geometry.location;
+            setLatLng(lat, lng)
+            return resolve("good")
+        },
+        error => {
+            console.error(error);
+            return reject(null)
+        }
+    )
+      })}
+
+  const handleTagRegistration = async(e) => {
+    e.preventDefault();
+    
+    const params = generateTagParams();
+    try{
+      client.post('/api/v1/tag',params)
+      navigate("/")
+    }catch(e){
+      console.log(e)
+    }
+  }
+
+  const CheckBox = ({id, value, checked, onChange}) => {
+    return(
+      <input
+      id={id}
+      type="checkbox"
+      name="inputNames"
+      checked={checked}
+      onChange={onChange}
+      value={value}
+    />
+    )
+  }
+
+  const checkboxChange = e => {
+    if(checkedItems.includes(e.target.value)){
+      setCheckedItems(checkedItems.filter(item => item !== e.target.value));
+    }else{
+      setCheckedItems([...checkedItems, e.target.value]);
+    }
+  }
+
+  console.log(checkedItems)
+
+  const generateTagParams = () => {
+    const newTagParams = {
+      name: newTag,
+    }
+    return newTagParams
   }
   
   const generateParams = () => {
@@ -41,29 +129,19 @@ export const SpotNew = () =>{
       fee: fee,
       stay_time: stayTime,
       eat_walk: eatWalk,
-      images: images
+      images: images,
+      tag_ids: checkedItems,
+      lat: lat,
+      lng: lng
     }
     return newSpotParams
   }
 
-  const handleSpotRegistration = async(e) => {
+  async function handleSpotRegistration(e) {
     e.preventDefault();
     const params = generateParams();
-    // const images = e.target.files[0];
-    // const reader = new FileReader();
-    // console.log(reader)
-    // if(images){
-    //   reader.onload = () =>{
-    //     setImages({
-    //       data: reader.result,
-    //       name: images[0] ? images[0].name :"unknownfile"
-    //     })
-    //   }
-    //   reader.readAsDataURL(images[0])
-    // }
-
     try{
-      client.post('/api/v1/posts',params)
+      client.post('/api/v1/posts', params)
       navigate("/")
     }catch(e){
       console.log(e)
@@ -78,6 +156,7 @@ export const SpotNew = () =>{
       m: "0 auto"
     }}
     >
+      
     <Typography variant={"h5"} sx={{ m: "30px" }}>
       スポット登録画面
     </Typography>
@@ -103,7 +182,9 @@ export const SpotNew = () =>{
           value= {address}
           fullWidth
           variant = "standard"
-          onChange={(e) => setAddress(e.target.value)}
+          onChange={(e) => {
+            setAddress(e.target.value)
+            geoCode()}}
         />
         </div>
         <div>
@@ -197,6 +278,39 @@ export const SpotNew = () =>{
         </div>
       </div>
       
+      <p>タグを選択する</p>
+      <CheckBoxButtons>
+        {tags.map((val) => {
+          return(
+            <CheckBoxButton id={val.id} checkedItems={checkedItems}>
+              <label htmlFor={`id_${val.id}`} key = {`key_${val.id}`}>
+                <CheckBox
+                  id = {`id_${val.id}`}
+                  value = {val.id}
+                  onChange = {checkboxChange}
+                  checked = {checkedItems.includes(`${val.id}`)}
+                />
+                {val.name}
+              </label>
+            </CheckBoxButton>
+          )
+        })}
+      </CheckBoxButtons>
+
+      <TextField 
+          type="text"
+          id= "tag"
+          label= "タグの追加"
+          name= "tag"
+          value= {newTag}
+          fullWidth
+          variant = "standard"
+          onChange={(tag) => setNewTag(tag.target.value)}
+        />
+        <Button type="submit" variant="contained" color="primary" onClick={(tag) => handleTagRegistration(tag)}>
+        タグを追加する
+        </Button>
+      
       <Typography variant={"h5"} sx={{ m: "30px" }}>
       画像アップロード
         <input 
@@ -208,6 +322,8 @@ export const SpotNew = () =>{
       <Button type="submit" variant="contained" color="primary" onClick={(e) => handleSpotRegistration(e)}>
         登録する
       </Button>
+      <LoadScript googleMapsApiKey= {"AIzaSyAWyQfXaQA7ITensdfjr7MOt081KlrKLec"}>
+      </LoadScript>
     </form>
     </Paper>
   )
@@ -217,4 +333,31 @@ const TimeInput = styled.div`
   display: flex;
   justify-content: space-between;
   color: currentColor;
+`
+
+const CheckBoxButton = styled.div`
+  &&& input{
+    display: none;
+  }
+  &&& label{
+    font-size:16px;
+    cursor: pointer;
+    border:1px solid #3f51b5;
+    background-color: ${props => props.checkedItems.includes(String(props.id)) ? '#3f51b5' : '#fff' };
+    color: ${props => props.checkedItems.includes(String(props.id)) ? '#fff' : '#3f51b5' };
+    padding: 5px;
+    border-radius:3px;
+    margin:2px;
+    &:hover{
+      color: #fff;
+      background-color: #3f51b5;
+      transition: 0.5s;
+    }
+  }
+`
+
+const CheckBoxButtons = styled.div`
+  display: flex;
+  height:50px;
+  font-size: 0px;
 `
