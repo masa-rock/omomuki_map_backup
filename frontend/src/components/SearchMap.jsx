@@ -10,7 +10,7 @@ export const SearchMap = () => {
   const [key, setKey] = useState(0)
 
   useEffect(() => {
-      axios.get('http://0.0.0.0:3001/api/v1/posts')
+      axios.get(`${process.env.BASE_URL}/posts`)
       .then(resp =>{
         setSpots(resp.data.posts);
       })

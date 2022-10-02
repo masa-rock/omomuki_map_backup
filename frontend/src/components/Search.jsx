@@ -12,7 +12,7 @@ export const Search = () => {
   const [checkedItems, setCheckedItems] = useState([])
 
   useEffect(() => {
-    axios.get('http://0.0.0.0:3001/api/v1/tag')
+    axios.get(`${process.env.BASE_URL}/tag`)
     .then(resp => {
       setTags(resp.data)
     })

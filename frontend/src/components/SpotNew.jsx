@@ -29,7 +29,7 @@ export const SpotNew = () =>{
   const [geocoder, setGeocoder] = useState(null);
 
   useEffect(() => {
-    axios.get('http://0.0.0.0:3001/api/v1/tag')
+    axios.get(`${process.env.BASE_URL}/tag`)
     .then(resp => {
       console.log(resp)
       setTags(resp.data)
