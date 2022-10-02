@@ -33,6 +33,7 @@
     "web-vitals": "^2.1.4"
   },
   "license": "UNLICENSED",
+  "homepage": "/public",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
