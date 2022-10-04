@@ -94,7 +94,7 @@ export const SpotSinglePage = () => {
   }
 
   const dataDelete = (delete_id) => {
-    if (window.confirm("投稿を削除しますがよろしいですか")){
+    if (window.confirm("投稿を削除しますがよろしいでしょうか")){
       axios.delete(`${process.env.BASE_URL}/posts/${delete_id}`)
       .then(
         navigate("/spot/list")
