@@ -23,24 +23,21 @@ export const AuthContext = createContext();
     const [isSignedIn, setIsSignedIn] = useState(false);
     const [currentUser, setCurrentUser] = useState();
     const handleGetCurrentUser = async () => {
-      
-        console.log('try?')
+      try{
         const res = await getCurrentUser();
-        // if (res?.data.isLogin === true) 
-        res.then(resp =>{
-          console.log("hogeif?")
+        if (res?.data.isLogin === true) {
+        // res.then(resp =>
           setIsSignedIn(true);
-          setCurrentUser(resp.data.data);
-          console.log(resp.data.data);
-        })
-        // } else {
-        //   console.log("hogeelse?")
-        //   console.log("no current user");
-        // }
-      .catch(e => {
-        console.log(e);
+          setCurrentUser(res.data.data);
+          console.log(res.data.data);
+        }else {
+          console.log("hogeelse?")
+          console.log("no current user");
+        }
+      }catch (e) {
+        console.log(e)
         console.log("hogecatch?ex")
-      })
+      }
       setLoading(false);
     };
    
@@ -48,18 +45,7 @@ export const AuthContext = createContext();
       console.log("3.1")
       handleGetCurrentUser()
     }, [setCurrentUser])
-   
-    const Private = ({ children }) => {
-      if (!loading) {
-        if (isSignedIn) {
-          return children;
-        } else {
-          // return <Redirect to="signin" />;
-        }
-      } else {
-        return <></>;
-      }
-    };
+
   return (
   <div className="App">
     <AuthContext.Provider

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import { useState, useEffect } from "react";
+import 'animate.css';
 
 export const Search = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export const Search = () => {
   const [checkedItems, setCheckedItems] = useState([])
 
   useEffect(() => {
-    axios.get(`${process.env.BASE_URL}/tag`)
+    axios.get("http://0.0.0.0:3001/api/v1/tag")
     .then(resp => {
       setTags(resp.data)
     })
@@ -54,15 +55,20 @@ export const Search = () => {
     const params = generateParams();
     navigate(`/spot/list`, {state: {params: params}})
   }
+  
+  console.log("tagの表示")
+  console.log(tags)
 
   return(
-    <Paper
-      sx = {{
-        p: "40px",
-        width: "30%",
-        m: "300px auto 200px 0"
-      }}
-      >
+    <TopContainer>
+      <Paper
+        sx = {{
+          p: "40px",
+          width: "30%",
+          m: "200px 0"
+        }}
+        className = "animate__animated animate__fadeIn"
+        >
         <Subject>
           <h4>スポットを探す</h4>
           <p>キーワードから探す</p>
@@ -80,7 +86,7 @@ export const Search = () => {
           </div>
           <p>タグから探す</p>
           <CheckBoxButtons>
-            {tags.map((val) => {
+            {tags?.map((val) => {
               return(
                 <CheckBoxButton id={val.id} checkedItems={checkedItems}>
                   <label htmlFor={`id_${val.id}`} key = {`key_${val.id}`}>
@@ -101,6 +107,11 @@ export const Search = () => {
           </Button>
         </Subject>
       </Paper>
+      <MainMessage
+       className="animate__animated animate__fadeInUp">
+        趣のある場所へ<br/>出かけよう
+      </MainMessage>
+    </TopContainer>
   )
 }
 
@@ -134,6 +145,18 @@ const CheckBoxButton = styled.div`
       transition: 0.5s;
     }
   }
+`
+
+const TopContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const MainMessage = styled.div`
+  color: #fff;
+  font-family: 'Shippori Mincho', serif;
+  text-align: right;
 `
 
 const CheckBoxButtons = styled.div`

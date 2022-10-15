@@ -28,14 +28,14 @@ export const SpotList = () => {
   }
 
   useEffect(() => {
-    axios.get(`${process.env.BASE_URL}/tag`)
+    axios.get("http://0.0.0.0:3001/api/v1/tag")
     .then(resp => {
       setAllTag(resp.data)
     })
     .catch( e => {
       console.log(e.response);
     })
-    axios.get(`${process.env.BASE_URL}/posts`, {params: searchparams})
+    axios.get("http://0.0.0.0:3001/api/v1/posts", {params: searchparams})
     .then(resp => {
       setSpots(resp.data.posts);
       setCount(resp.data.posts.length);

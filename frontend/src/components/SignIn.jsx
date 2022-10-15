@@ -35,7 +35,7 @@ export const SignIn = (e) => {
         setIsSignedIn(true)
         setCurrentUser(res.data.data)
 
-        console.log("signinできた")
+        console.log(Cookies.get())
 
         navigate(-1)
       }

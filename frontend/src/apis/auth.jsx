@@ -3,12 +3,16 @@ import Cookies from "js-cookie";
 
 // サインアップ
 export const signUp = (params) => {
-  return client.post("auth", params);
+  return client.post("auth", params, {
+    withCredentials: true
+  });
 };
 
 // サインイン
 export const signIn = (params) => {
-  return client.post("auth/sign_in", params);
+  return client.post("auth/sign_in", params, {
+    withCredentials: true
+  });
 };
 
 // サインアウト
@@ -36,5 +40,6 @@ export const getCurrentUser = () => {
       "client": Cookies.get("_client"),
       "uid": Cookies.get("_uid"),
     }
-  })
+  },
+  { withCredentials: true })
 }

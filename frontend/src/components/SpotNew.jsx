@@ -7,6 +7,9 @@ import client from "../apis/client";
 import axios from 'axios';
 import { LoadScript } from '@react-google-maps/api';
 import Geocode from "react-geocode";
+// test
+import { useInView } from 'react-intersection-observer';
+import 'animate.css';
 
 export const SpotNew = () =>{
   const navigate = useNavigate();
@@ -16,7 +19,7 @@ export const SpotNew = () =>{
   const [businessHourStart, setBusinessHourStart] = useState();
   const [businessHourEnd, setBusinessHourEnd] = useState();
   const [fee, setFee] = useState();
-  const [stayTime, setStayTime] = useState();
+  const [stayTime, setStayTime] = useState(0);
   const [eatWalk, setEatWalk] = useState();
   const [images, setImages] = useState({data: "", name: ""});
   const [lat,setLat] = useState(0);
@@ -29,7 +32,7 @@ export const SpotNew = () =>{
   const [geocoder, setGeocoder] = useState(null);
 
   useEffect(() => {
-    axios.get(`${process.env.BASE_URL}/tag`)
+    axios.get("http://0.0.0.0:3001/api/v1/tag")
     .then(resp => {
       console.log(resp)
       setTags(resp.data)
@@ -38,6 +41,11 @@ export const SpotNew = () =>{
       console.log(e.response)
     })
   },[])
+
+  const { ref, inView } = useInView({
+    rootMargin: '-100px',
+    triggerOnce: true
+  })
 
   const handleImageSelect = async(e) => {
     const reader = new FileReader()
@@ -67,6 +75,7 @@ export const SpotNew = () =>{
       Geocode.fromAddress(address).then(
         response => {
             const { lat, lng } = response.results[0].geometry.location;
+            console.log(lat)
             setLatLng(lat, lng)
             return resolve("good")
         },
@@ -82,7 +91,7 @@ export const SpotNew = () =>{
     
     const params = generateTagParams();
     try{
-      client.post('/api/v1/tag',params)
+      client.post('tag',params)
       navigate("/")
     }catch(e){
       console.log(e)
@@ -109,8 +118,6 @@ export const SpotNew = () =>{
       setCheckedItems([...checkedItems, e.target.value]);
     }
   }
-
-  console.log(checkedItems)
 
   const generateTagParams = () => {
     const newTagParams = {
@@ -141,7 +148,7 @@ export const SpotNew = () =>{
     e.preventDefault();
     const params = generateParams();
     try{
-      client.post('/api/v1/posts', params)
+      client.post('/posts', params)
       navigate("/")
     }catch(e){
       console.log(e)
@@ -307,9 +314,14 @@ export const SpotNew = () =>{
           variant = "standard"
           onChange={(tag) => setNewTag(tag.target.value)}
         />
-        <Button type="submit" variant="contained" color="primary" onClick={(tag) => handleTagRegistration(tag)}>
-        タグを追加する
+        <Button type="submit" variant="contained" color="primary" onClick={(tag) => handleTagRegistration(tag)} >
+            <p>タグを追加する</p>
         </Button>
+        <div className="animate__animated animate__fadeIn" ref={ref} >
+        {inView && (
+          <p>ふわっと表示</p>
+        )}
+        </div>
       
       <Typography variant={"h5"} sx={{ m: "30px" }}>
       画像アップロード
