@@ -8,6 +8,8 @@ import Review from "./Review";
 import { Rating } from "@mui/material";
 import { ImAirplane } from 'react-icons/im';
 import { IconContext } from "react-icons/lib";
+import { MediaQueryContext } from './Provider/MediaQueryProvider';
+import media from "styled-media-query"
 
 export const FlagContext = createContext();
 
@@ -35,6 +37,7 @@ export const SpotSinglePage = () => {
   const [wantToGo, setWantToGo] = useState([])
   const [wantToGoData, setWantToGoData] = useState([])
   const [flag, setFlag] = useState(false);
+  const { isMobileSite, isTabletSite, isPcSite } = useContext(MediaQueryContext)
   const total_review = postReview.length
   const average_review = total_review ? postReview.reduce((sum, i) => sum + i.rate, 0)/total_review : 0 ;
   const value = {
@@ -181,7 +184,10 @@ export const SpotSinglePage = () => {
   return(
     <SinglePageContainer>
       <SingleSpotTitle>
-        {name}      
+        {name}
+        {(isMobileSite || isTabletSite) && (
+          <br/>
+        )}
         <Rating
          value = { average_review }
          precision = { 0.1 }
@@ -224,9 +230,6 @@ export const SpotSinglePage = () => {
           <Button onClick={() => { navigate(-1) }}>一覧ページに戻る</Button>
         </SinglePageRightContainer>
       </SinglePageMain>
-      <SinglePageTitle>
-        投稿写真
-      </SinglePageTitle>
       <FlagContext.Provider value={value} >
         <Review/>
       </FlagContext.Provider>
@@ -241,12 +244,19 @@ const SinglePageContainer = styled.div`
   padding: 100px;
   color: black;
   border-radius: 20px;
+  ${media.lessThan("medium")`
+    padding: 50px;
+    margin: 0 auto;
+  `}
 `
 
 const SingleSpotTitle = styled.div`
   font-size: 38px;
   text-align: left;
   margin-left: 20px;
+  ${media.lessThan("medium")`
+    font-size: 22px;
+  `}
   &&& span{
     color: red;
   } 
@@ -259,19 +269,31 @@ const SinglePageTitle = styled.h3`
 
 const ImageContainer = styled.div`
   width: 50%;
+  ${media.lessThan("medium")`
+    width: 100%;    
+  `}
   &&& img{
+    display: block;
     width: 100%;
+    max-height: 500px;
     border-radius:10px;
   }
 `
 
 const SinglePageMain = styled.div`
   display: flex;
+  ${media.lessThan("medium")`
+    display: block;
+  `}
 `
 
 const SinglePageRightContainer = styled.div`
   padding: 50px;
   width:50%;
+  ${media.lessThan("medium")`
+    width: 100%;
+    padding:20px 0;
+  `}
 `
 
 const SinglePageSubject = styled.dt`

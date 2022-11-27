@@ -18,11 +18,13 @@ export const MyPage = () =>{
 const MyPageContainer = styled.div`
   display: flex;
   height: 100vh;
+  z-index: 10;
 `
 
 const SideBarContainer = styled.div`
   width: 200px;
   background-color: #2d445d;
+  position: fixed;
 `
 
 const MainContainer = styled.div`

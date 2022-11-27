@@ -30,6 +30,7 @@ services:
       - "3001:3001"
     depends_on: 
       - db
+      - chrome
 
   front:
     build: 
@@ -38,10 +39,17 @@ services:
     volumes:
       - ./frontend:/frontend
     # command: /bin/sh -c "cd app && yarn && yarn start"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     command: npm start
     ports:
       - "3000:3000"
 
+  chrome:
+     image: selenium/standalone-chrome-debug:latest
+     ports:
+       - 4444:4444
+       - 5900:5900
 volumes:
   mysql-data:
   bundle: 

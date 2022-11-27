@@ -7,7 +7,6 @@ import client from "../apis/client";
 import axios from 'axios';
 import { LoadScript } from '@react-google-maps/api';
 import Geocode from "react-geocode";
-// test
 import { useInView } from 'react-intersection-observer';
 import 'animate.css';
 
@@ -148,8 +147,13 @@ export const SpotNew = () =>{
     e.preventDefault();
     const params = generateParams();
     try{
-      client.post('/posts', params)
-      navigate("/")
+      client.post('posts', params)
+      .then(resp => {
+        console.log(resp)
+      }).catch(e => {
+        console.log(e)
+      })
+      
     }catch(e){
       console.log(e)
     }

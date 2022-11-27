@@ -1,23 +1,25 @@
 import styled from 'styled-components';
 import {useEffect, useState} from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper';
-import { Grid, CardHeader, Card } from "@material-ui/core";
-import { CardMedia } from "@mui/material";
 import { Rating } from "@mui/material";
 import noimg from "../images/noimg.jpg"
+import media from "styled-media-query"
 
 import  'swiper/css';
 import  'swiper/css/navigation';
 import  'swiper/css/pagination';
 
 export const AssessmentSection = () => {
+  const navigate = useNavigate()
   const [spots, setSpots] = useState([])
+
   useEffect(() => {
-    axios.get("http://0.0.0.0:3001/api/v1/posts")
+    axios.get("http://0.0.0.0:3001/api/v1/posts/assessment")
     .then(resp =>{
-      setSpots(resp.data.posts);
+      setSpots(resp.data);
     })
     .catch(e => {
       console.log(e.response);
@@ -26,12 +28,18 @@ export const AssessmentSection = () => {
 
     const DisplayImg = (img) =>{
       const display_img =  img.img != 0 ? img.img : noimg
+      console.log(img.img)
       return(
         <img src = {display_img} />
       )
     }
 
+    const ToSinglePage = (id) => {
+      navigate(`/spot/${id}`,{id: id})
+    }
+
     const StarRating = (props) => {
+      console.log(props)
       const total_review = props.props.length
       const average_review = props.props.reduce((sum, i) => sum + i.rate, 0)/total_review;
       const average_review_result = average_review ? average_review : 0
@@ -65,16 +73,16 @@ export const AssessmentSection = () => {
             }}
           >
             {spots.map((val) => (
-              <SwiperSlide>
+              <SwiperSlide onClick={() => ToSinglePage(val.id)}>
+                {console.log(val)}                
                 <SwiperTitle>
                   <div>{val.name}</div>
-                  {/* <div></div> */}
                   <StarRating
                     props = { val.review }
                   />
                 </SwiperTitle>
                 <div><DisplayImg img={val.image_url}/></div>
-              </SwiperSlide>
+              </SwiperSlide>              
             ))}
           </Swiper>
         </SwiperContainer>
@@ -85,14 +93,18 @@ export const AssessmentSection = () => {
 
 const AssessmentContainer = styled.div`
   height: 500px;
-  width: 600px;
+  max-width: 600px;
   margin: 100px auto;
+  padding:15px;
 `
 
 const AssessmentContainerTitle = styled.h5`
   font-family: 'Shippori Mincho', serif;
   font-size: 30px;
   border-bottom: solid 1px ;
+  ${media.lessThan("medium")`
+    font-size: 22px;
+  `}
 `
 
 const SwiperTitle = styled.div`
@@ -105,8 +117,7 @@ const SwiperContainer = styled.div`
   margin: 20px 0;
   height: 100%;
   &&& img{
-    object-fit: cover;
-    width: 100%;
+    object-fit: cover;    
     height: 400px;
   }
 `

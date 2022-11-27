@@ -5,11 +5,13 @@ import { signIn } from '../apis/auth';
 import { AuthContext } from "../App";
 import { Paper, TextField, Typography } from "@mui/material";
 import Button from '@material-ui/core/Button';
+import { MediaQueryContext } from './Provider/MediaQueryProvider';
 import styled from 'styled-components';
 
 export const SignIn = (e) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const { isMobileSite, isTabletSite, isPcSite } = useContext(MediaQueryContext)
   const [password, setPassword] = useState("");
   const { setIsSignedIn, setCurrentUser } = useContext(AuthContext);
 
@@ -45,56 +47,116 @@ export const SignIn = (e) => {
   }
 
   return (
-    <Paper
+    <>
+    {isPcSite &&(
+        <Paper      
+          sx = {{
+            p: "100px",
+            width: "400px",
+            m: "0 auto"
+          }}
+        >   
+          <div>
+      <Typography variant={"h5"} sx={{ m: "30px" }}>
+        ログイン画面
+      </Typography>
+      <form>
+        <SignInContainerStyle>
+          <div>
+            <TextField 
+              type=" email"
+              id= "email"
+              label= "メールアドレス"
+              name= "email"
+              value= {email}
+              fullWidth
+              variant = "standard"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+            <div>
+            <TextField
+              type="password"
+              id="password"
+              label="パスワード"
+              name="password"
+              value={password}
+              fullWidth
+              variant = "standard"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+            <Button type="submit" variant="contained" color="primary" onClick={(e) => handleSignInSubmit(e)}>
+              ログイン
+            </Button>
+        </SignInContainerStyle>
+      </form>
+      <Space>
+        <Button variant ="outlined" color="primary" component={Link} to="/signup">
+          新規登録する
+        </Button>
+      </Space>
+      <Button variant ="outlined" color="primary" component={Link} to="/">
+        トップへ戻る
+      </Button>
+      </div>
+        </Paper>
+    )}
+    {(isTabletSite || isMobileSite) &&(
+      <Paper      
       sx = {{
-        p: "100px",
-        width: "400px",
+        p: "20px",
+        width: "300px",
         m: "0 auto"
       }}
-    >
-    <div>
-    <Typography variant={"h5"} sx={{ m: "30px" }}>
-      ログイン画面
-    </Typography>
-    <form>
-      <div>
-        <TextField 
-          type=" email"
-          id= "email"
-          label= "メールアドレス"
-          name= "email"
-          value= {email}
-          fullWidth
-          variant = "standard"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-        <div>
-        <TextField
-          type="password"
-          id="password"
-          label="パスワード"
-          name="password"
-          value={password}
-          fullWidth
-          variant = "standard"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button type="submit" variant="contained" color="primary" onClick={(e) => handleSignInSubmit(e)}>
-          ログイン
+    >   
+     <div>
+      <Typography variant={"h5"} sx={{ m: "30px" }}>
+        ログイン画面
+      </Typography>
+      <form>
+        <SignInContainerStyle>
+          <div>
+            <TextField 
+              type=" email"
+              id= "email"
+              label= "メールアドレス"
+              name= "email"
+              value= {email}
+              fullWidth
+              variant = "standard"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+            <div>
+            <TextField
+              type="password"
+              id="password"
+              label="パスワード"
+              name="password"
+              value={password}
+              fullWidth
+              variant = "standard"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+            <Button type="submit" variant="contained" color="primary" onClick={(e) => handleSignInSubmit(e)}>
+              ログイン
+            </Button>
+        </SignInContainerStyle>
+      </form>
+      <Space>
+        <Button variant ="outlined" color="primary" component={Link} to="/signup">
+          新規登録する
         </Button>
-      </div>
-    </form>
-    <Space>
-      <Button variant ="outlined" color="primary" component={Link} to="/signup">
-        新規登録する
+      </Space>
+      <Button variant ="outlined" color="primary" component={Link} to="/">
+        トップへ戻る
       </Button>
-    </Space>
-    <Button variant ="outlined" color="primary" component={Link} to="/">
-      トップへ戻る
-    </Button>
-    </div>
+      </div>
     </Paper>
+    )}
+    </>
   )
 }
 
@@ -102,3 +164,13 @@ const Space = styled.div`
   margin-right:10px;
   display:inline;
 `;
+
+const SignInContainerStyle = styled.div`
+  &&& div{
+    margin: 10px 0;
+  }
+
+  &&& button{
+    margin: 10px 0 30px;
+  }
+`

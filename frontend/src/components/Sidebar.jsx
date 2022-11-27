@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { AiFillEdit } from 'react-icons/ai';
 import { ImAirplane } from 'react-icons/im';
+import { FaKey } from 'react-icons/fa'
 
 export const Sidebar = () => {
   const location = useLocation();
@@ -21,6 +22,15 @@ export const Sidebar = () => {
       >
         <ImAirplane/>
         <span>行きたい場所一覧</span></li>
+      <li 
+        className="SidebarRow"
+        onClick ={() => {
+          window.location.pathname = "/update-password"
+          console.log("aaa")
+        }}
+      >
+        <FaKey/>
+        <span>パスワード変更</span></li>
     </ul>
   )
 }

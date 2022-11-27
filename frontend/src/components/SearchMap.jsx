@@ -1,13 +1,16 @@
-import React, { useEffect, useState, useMemo, Component } from "react";
+import React, { useEffect, useState, useMemo, useContext } from "react";
 import axios from 'axios';
 import { LoadScript, GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
-import { Paper, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel } from "@mui/material";
-import { positions } from "@mui/system";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Rating } from "@mui/material";
 import { useInView } from 'react-intersection-observer';
+import { useNavigate } from 'react-router-dom';
+import { MediaQueryContext } from './Provider/MediaQueryProvider';
+import media from "styled-media-query"
 import styled from 'styled-components';
 import 'animate.css';
 
-export const SearchMap = () => {
+export const SearchMapSection = () => {
   const [spots, setSpots] = useState([])
   const [select, setSelect] = useState("off")
   const [key, setKey] = useState(0)
@@ -16,6 +19,8 @@ export const SearchMap = () => {
   const [zoom, setZoom] =useState(9.5)
   const [tags, setTags] = useState([])
   const [checkedItems, setCheckedItems] = useState([])
+  const navigate = useNavigate()
+  const { isMobileSite, isTabletSite, isPcSite } = useContext(MediaQueryContext)
   const { ref, inView } = useInView({
     rootMargin: '-50px',
     triggerOnce: true
@@ -57,6 +62,23 @@ export const SearchMap = () => {
   const checkedTag = {
     tags: checkedItems
   }
+
+  const StarRating = (props) => {
+    console.log(props)
+    const total_review = props.props.length
+    const average_review = props.props.reduce((sum, i) => sum + i.rate, 0)/total_review;
+    const average_review_result = average_review ? average_review : 0
+    return (
+      <>
+        <Rating
+         value={average_review_result}
+         precision = {0.1}
+         readOnly = {true}
+          />
+        <span> ({ total_review }) </span>
+      </>
+    )
+  }
   
   const checkboxChange = e => {
     if(checkedItems.includes(e.target.value)){
@@ -64,6 +86,10 @@ export const SearchMap = () => {
     }else{
       setCheckedItems([...checkedItems, e.target.value]);
     }
+  }
+
+  const ToSinglePage = (id) => {
+    navigate(`/spot/${id}`,{id: id})
   }
 
   const CheckBox = ({id, value, checked, onChange}) => {
@@ -90,14 +116,18 @@ export const SearchMap = () => {
               setSelect("on")
               setKey(val.id)
             }}
-            onMouseOut={() =>{
-              setSelect("off")
+            onClick={() => {
+              setSelect("on")
+              setKey(val.id)
             }}
             />
             
           {select === "on" && key === val.id?
             <InfoWindow key={val.id} position={{lat:val.lat, lng:val.lng}} options={{pixelOffset: new window.google.maps.Size(0,-40)}} >
+              <div onClick={() => ToSinglePage(val.id)} className = "hover-point">
                 <p>{val.name}</p>
+                <StarRating props = {val.review} />
+              </div>
             </InfoWindow>        
           : ""}
         </>
@@ -129,12 +159,23 @@ export const SearchMap = () => {
       })
     },[checkedItems])
 
+  const mapContainerSize = () => {
+    if(isPcSite){
+      return(
+      {height: '50vh', width: '100%'})}
+      else{
+        return(
+      {height: '30vh', width: '100%'}
+        )
+      }
+    }
+
   return(
     <SearchMapContainer>
       <MapContainer className="animate__animated animate__fadeInUp">        
         <LoadScript googleMapsApiKey="AIzaSyAWyQfXaQA7ITensdfjr7MOt081KlrKLec">
           <GoogleMap
-            mapContainerStyle={{ height: '60vh', width: '100%' }} 
+            mapContainerStyle={mapContainerSize()}
             center={center} 
             zoom={new_zoom}
             onCenterChanged ={HandleCenterChanged}
@@ -199,21 +240,35 @@ const SearchMapContainer = styled.div`
   background-color: #f4f2ee;
   display: flex;
   justify-content: space-between;
-  padding: 100px 100px;
+  padding: 100px;
+  ${media.lessThan("medium")`
+    display: block;
+    padding: 20px 20px;
+  `}
 `
 
 const MapContainer = styled.div`
   width: 50%;
+  ${media.lessThan("medium")`
+    width: 100%;
+  `}
 `
 
 const MapContext = styled.div`
   width: 40%;
-  padding: 30px 30px;
+  padding: 30px;
+  margin: auto 0;
+  ${media.lessThan("medium")`
+    width: inherit;
+  `}
   &&& p{
     font-family: 'Shippori Mincho', serif;
     text-align: center;
     font-size: 30px;
     border-bottom: solid 1px ;
+    ${media.lessThan("medium")`
+      font-size: 22px;
+    `}
   }
 `
 

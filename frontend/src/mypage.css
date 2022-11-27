@@ -19,3 +19,15 @@
 .SidebarRow span{
   padding-left: 5px;
 }
+
+.mypage-container{
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar-container{
+  padding-top: 100px;
+  width: 200px;
+  background-color: #2d445d;
+  z-index: 10;
+}

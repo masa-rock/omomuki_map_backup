@@ -32,8 +32,16 @@ h3 { font-size: 1.17em; margin: .83em 0 }
   display: none;
 }
 
-.check-box-button label{
-  
+.main-container{
+  background-color: #f5f5f5;
+  width: calc(100% - 200px);  
+  padding: 100px;
+}
+
+.main-container form{
+  margin: 20px auto;
+  max-width: 600px;
+  width: 80%;
 }
 
 /* top_page */
@@ -45,4 +53,8 @@ h3 { font-size: 1.17em; margin: .83em 0 }
 
 .region-select-box{
   width: 100%;
+}
+
+.hover-point{
+  cursor: pointer;
 }
