@@ -26,6 +26,7 @@ export const signOut = () => {
   });
 };
 
+
 // プロフィール編集
 export const editProfile = () =>{
   return client.get("auth/edit");
