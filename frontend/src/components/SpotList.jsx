@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import { Grid, CardHeader, Card } from "@material-ui/core";
-import { CardMedia } from "@mui/material";
+import { CardMedia, Rating } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import ReactPaginate from 'react-paginate';
-import ReactStarsRatings from 'react-awesome-stars-rating';
 import '../Pagination.css'
 import '../Spot.css'
 import styled from 'styled-components';
@@ -28,15 +27,14 @@ export const SpotList = () => {
   }
 
   useEffect(() => {
-    console.log(searchparams)
-    axios.get('http://0.0.0.0:3001/api/v1/tag')
+    axios.get("http://0.0.0.0:3001/api/v1/tag")
     .then(resp => {
       setAllTag(resp.data)
     })
     .catch( e => {
       console.log(e.response);
     })
-    axios.get('http://0.0.0.0:3001/api/v1/posts', {params: searchparams})
+    axios.get("http://0.0.0.0:3001/api/v1/posts", {params: searchparams})
     .then(resp => {
       setSpots(resp.data.posts);
       setCount(resp.data.posts.length);
@@ -62,13 +60,17 @@ export const SpotList = () => {
     navigate(`/spot/${id}`,{id: id})
   }
 
-  const StarRating = (prop) => {
-    const total_review = prop.review.length
-    const average_review = prop.review.reduce((sum, i) => sum + i.rate, 0)/total_review;
+  const StarRating = (props) => {
+    console.log(props)
+    const total_review = props.props.length
+    const average_review = props.props.reduce((sum, i) => sum + i.rate, 0)/total_review;
     const average_review_result = average_review ? average_review : 0
     return (
       <>
-        <ReactStarsRatings value={average_review_result} />
+        <Rating
+         value={average_review_result}
+         precision = {0.1}
+          />
         <span> { average_review_result.toFixed(2) } </span>
         <span> ({ total_review }) </span>
       </>
@@ -95,11 +97,11 @@ export const SpotList = () => {
       <p>{keyword ? `キーワード：${keyword}`:``}</p>
       <p>検索結果：{count}件がヒットしました。</p>      
       <TagDisplay/>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{ m:2 }}>
         {spots.slice(offset, offset+ perPage).map((val) => {
         return(  
-          <Grid item xs={3}>
-            <Card onClick={() => ToSinglePage(val.id)} className = {"spot-list-card"}>              
+          <Grid item sm={6} md={3} xs={12} >
+            <Card onClick={() => ToSinglePage(val.id)} className = {"spot-list-card"}>
               {console.log(val.tags)}
               <span>{ val.name }</span>
               <CardMedia
@@ -107,7 +109,7 @@ export const SpotList = () => {
               image = { DisplayImg(val.image_url) }
               height = "200"
               />
-              <StarRating review = { val.review }/>
+              <StarRating props = { val.review }/>
               <SinglePageTags>{ val.tags.map((data) => {
               {console.log(data)}
               return(

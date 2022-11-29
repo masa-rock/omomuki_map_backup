@@ -1,14 +1,14 @@
 import styled from 'styled-components';
-import { TextField, CardHeader, Card } from "@material-ui/core";
-import ReactStarsRating from 'react-awesome-stars-rating';
+import { TextField, Card } from "@material-ui/core";
 import { Typography, CardMedia, Rating } from "@mui/material";
 import Button from '@material-ui/core/Button';
-import { useState, useEffect, useContext } from "react";
+import { useState, useMemo, useContext } from "react";
 import {useModal} from 'react-hooks-use-modal';
 import { AuthContext } from '../App';
 import { FlagContext } from './SpotSinglePage'
 import client from "../apis/client";
 import { useParams, useNavigate } from 'react-router-dom';
+import media from "styled-media-query"
 
 const Review = () => {
   const {setIsSignedIn, isSignedIn, currentUser, loading} = useContext(AuthContext);  
@@ -18,6 +18,7 @@ const Review = () => {
   const [error, setError] = useState([])
   const [titleBlank, setTitleBlank] = useState(false)
   const [commentBlank, setCommentBlank] = useState(false)
+  const [rateBlank, setRateBlank] = useState(false)
 
   const DoReview = () => {
     if (!loading){
@@ -40,13 +41,20 @@ const Review = () => {
     preventScroll: true
   })
 
+  const error_message_display = useMemo(() => {
+    setTitleBlank(false)
+    setCommentBlank(false)
+    setRateBlank(false)
+  },[isOpen])
+
   const handleSpotRegistration = async(e) => {
     e.preventDefault();
-    if(value.title && value.reviewComment){
+    if(value.title && value.reviewComment && value.star > 0){
       const params = await generateParams();
       try{
         const data = client.post('reviews', params)
         console.log(data)
+        navigate(-1)
       }catch(e){
         console.log(e)
       }
@@ -54,6 +62,7 @@ const Review = () => {
       console.log("good")
       value.title ? setTitleBlank(false) : setTitleBlank(true)
       value.reviewComment ? setCommentBlank(false) : setCommentBlank(true)
+      value.star == 0 ? setRateBlank(true) : setRateBlank(false)
     }
   }
 
@@ -101,7 +110,6 @@ const Review = () => {
       { value.reviews.map((key) => {
         return(
           <Card className = {"spot-list-card review-container"}>
-            {/* <ReviewCardImg img = {key.image_url}/> */}
             <CardMedia
               component = "img"
               image = { DisplayImg(key.image_url) }
@@ -132,6 +140,7 @@ const Review = () => {
         <form>
           { titleBlank ? <ErrorMessage>※タイトルを入力してください</ErrorMessage> : "" }
           { commentBlank ? <ErrorMessage>※コメントを入力してください</ErrorMessage> : "" }
+          { rateBlank ? <ErrorMessage>※評価を0以上に設定してください</ErrorMessage> : "" }
           <SingleSpotTitle>"{value.name}"のレビューを追加する</SingleSpotTitle>
           <Assessment>
             <SingleSpotTitle>評価</SingleSpotTitle>
@@ -192,15 +201,19 @@ export default Review;
 const ReviewTitleContainer = styled.div`
   display: flex;
   align-items: center;
+  ${media.lessThan("medium")`
+    display: block
+  `}
 `
 const SinglePageTitle = styled.h3`
-  font-size: 38px;
+  font-size: 20px;
   text-align: left;
-`
-
-const SingleSpotTitle = styled.h3`
-  font-size: 38px;
+  `
+  
+  const SingleSpotTitle = styled.h3`
+  font-size: 20px;
   text-align: left;
+  margin: 10px 0;
 `
 
 const ModalButton = styled.button`
@@ -213,7 +226,7 @@ const ModalButton = styled.button`
 const ModalStyle = styled.div`
   background-color: #fff;
   width: 800px;
-  height: 800px;
+  height: 600px;
   padding: 60px 100px;
   border-radius: 10px;
 `
@@ -243,6 +256,14 @@ const ReviewMainContainer = styled.div`
     text-align: left;
     margin: 10px;
   }
+  ${media.lessThan("medium")`
+    margin: 0;
+    &&& h3{
+      text-align: left;
+      font-weight: normal;
+      font-size: 16px;
+    }
+  `}
 `
 
 const ReviewMain = styled.div`
@@ -254,6 +275,9 @@ const ReviewMain = styled.div`
   &&& div{
     display: flex;
   }
+  ${media.lessThan("medium")`
+  display: block;
+  `}
 `
 
 const ReviewMainRight = styled.div`

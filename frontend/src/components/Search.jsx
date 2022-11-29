@@ -1,9 +1,12 @@
-import { Paper, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel } from "@mui/material";
+import { Paper, TextField } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import { useState, useEffect } from "react";
+import { Scrollbars } from 'rc-scrollbars'
+import 'animate.css';
+import media from "styled-media-query"
 
 export const Search = () => {
   const navigate = useNavigate();
@@ -12,9 +15,8 @@ export const Search = () => {
   const [checkedItems, setCheckedItems] = useState([])
 
   useEffect(() => {
-    axios.get('http://0.0.0.0:3001/api/v1/tag')
+    axios.get("http://0.0.0.0:3001/api/v1/tag")
     .then(resp => {
-      console.log(resp)
       setTags(resp.data)
     })
     .catch(e => {
@@ -57,13 +59,19 @@ export const Search = () => {
   }
 
   return(
-    <Paper
-      sx = {{
-        p: "40px",
-        width: "30%",
-        m: "300px auto 200px 0"
-      }}
-      >
+    <TopContainer>
+      <MainMessage
+       className="animate__animated animate__fadeInUp">
+        趣のある場所へ<br/>出かけよう
+      </MainMessage>
+      <Paper
+        sx = {{
+          p: "40px",
+          width: {lg:"30%"},
+          m: {lg:"200px 0"}
+        }}
+        className = "animate__animated animate__fadeIn"
+        >
         <Subject>
           <h4>スポットを探す</h4>
           <p>キーワードから探す</p>
@@ -80,43 +88,80 @@ export const Search = () => {
             />
           </div>
           <p>タグから探す</p>
-          <CheckBoxButtons>
-            {tags.map((val) => {
-              return(
-                <CheckBoxButton id={val.id} checkedItems={checkedItems}>
-                  <label htmlFor={`id_${val.id}`} key = {`key_${val.id}`}>
-                    <CheckBox
-                      id = {`id_${val.id}`}
-                      value = {val.id}
-                      onChange = {checkboxChange}
-                      checked = {checkedItems.includes(`${val.id}`)}
-                    />
-                    {val.name}
-                  </label>
-                </CheckBoxButton>
-              )
-            })}
-          </CheckBoxButtons>
+          <Scrollbars autoHeight>
+            <CheckBoxButtons>
+              {tags?.map((val) => {
+                return(
+                  <CheckBoxButton id={val.id} checkedItems={checkedItems}>
+                    <label htmlFor={`id_${val.id}`} key = {`key_${val.id}`}>
+                      <CheckBox
+                        id = {`id_${val.id}`}
+                        value = {val.id}
+                        onChange = {checkboxChange}
+                        checked = {checkedItems.includes(`${val.id}`)}
+                      />
+                      {val.name}
+                    </label>
+                  </CheckBoxButton>
+                )
+              })}
+            </CheckBoxButtons>
+          </Scrollbars>
           <Button variant="contained" color="primary" onClick={() => SearchSpot()}>
             検索する
           </Button>
         </Subject>
       </Paper>
+    </TopContainer>
   )
 }
+
+const TopContainer = styled.div`
+${media.greaterThan("large")`  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+`}
+`
+const MainMessage = styled.div`
+color: #fff;
+font-family: 'Shippori Mincho', serif;
+${media.lessThan("large")`
+margin-bottom: 10px;
+font-size: 20px;
+  &&& br{
+    display: none;
+  }
+`}
+${media.greaterThan("large")`
+  text-align: right;
+  font-size: 80px;
+`}
+`
 
 const Subject = styled.div`
   font-size: 20px;
   text-align: left;
+  ${media.lessThan("large")`
+    font-size:14px;
+  `}
   &&& p{
     margin-top:30px;
+    ${media.lessThan("large")`
+    margin-top:30px;
+  `}
     :nth-child(4){
       margin-bottom: 30px;
+      ${media.lessThan("large")`
+        margin-bottom:10px;
+      `}
     }
   }
 `
 
 const CheckBoxButton = styled.div`
+  height: inherit;
   &&& input{
     display: none;
   }
@@ -139,6 +184,8 @@ const CheckBoxButton = styled.div`
 
 const CheckBoxButtons = styled.div`
   display: flex;
-  height:50px;
+  flex-wrap: wrap;
+  height: 35px;
   font-size: 0px;
+  padding: 5px;
 `

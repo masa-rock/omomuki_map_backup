@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
-import { SearchMap } from './SearchMap'
+import { SearchMapSection } from './SearchMap'
+import { AssessmentSection } from './AssessmentSection';
+import { AboutSection } from './AboutSection'
 
 export const Home = () => {
   return (
   <>
-    <p>homeページです</p>
-    <Link to="/spot/new">スポットの登録</Link>
-    <SearchMap/>
+    <AboutSection/>
+    <SearchMapSection/>
+    <AssessmentSection/>
   </>
 )}
